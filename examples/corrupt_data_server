@@ -1,0 +1,58 @@
+#!/usr/bin/python
+#
+# Two or more clients should get corrupted data when using
+# the threaded server, else not
+#
+import sys
+import time
+import getopt
+from random import randint
+
+from rpclite.server import *
+
+
+# handle options
+server = XMLRPCServer
+opts,args = getopt.getopt( sys.argv[1:], 'btf' )    
+for k,v in opts:
+  if k == '-b': server = BlockingXMLRPCServer
+  elif k == '-t': server = ThreadingXMLRPCServer
+  elif k == '-f': server = ForkingXMLRPCServer
+
+try:
+    addr = args[0], int(args[1])
+except IndexError:
+    addr = "localhost", 8021
+
+size = 255
+sleep = 0.0001
+
+class Data:
+    def __init__(self):
+        self.data = ''
+        self.hash = hash(self._generate())
+        
+    def generate(self):
+        return str(self.hash), self._generate()
+
+    def _generate(self):
+        self.data = ''
+        d = 1024
+        for i in range(size):
+            self.data += str(d)
+            d += 1
+            time.sleep(sleep)
+        return self.data
+
+data = Data() # thread un-safe
+def generate_data():
+    #data = Data() # thread safe
+    return data.generate()
+
+server = server('corrupt_data_server', addr)
+server.register_function(generate_data)
+
+try:
+    server.serve_forever()
+except KeyboardInterrupt:
+    pass

@@ -1,0 +1,26 @@
+#!/usr/bin/python
+#
+import sys
+import cPickle
+
+import rpclite as rpc
+    
+try:
+    url = sys.argv[1]
+except IndexError:
+    url = "http://localhost:8021"
+
+
+server = rpc.XMLRPCServerProxy(url)
+
+print 'An object as a distonary:'
+obj = server.get_object1()
+print obj
+print ''
+
+print 'A pickable object:'
+from object import APObject
+
+obj = server.get_object2()
+obj = cPickle.loads(obj.data)
+print obj

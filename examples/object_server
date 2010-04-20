@@ -1,0 +1,48 @@
+#!/usr/bin/python
+#
+# A good description of supported data types in XML-RPC:
+# http://www.tldp.org/HOWTO/XML-RPC-HOWTO/
+#
+import sys
+import cPickle
+from random import randint
+
+import rpclite as rpc
+from rpclite.server import XMLRPCServer
+
+try:
+    addr = sys.argv[1], int(sys.argv[2])
+except IndexError:
+    addr = "localhost", 8021
+
+
+class ADObject:
+    class Nested:
+        def __init__(self):
+            self.number = randint(1,99999)
+            self.tuple = ('thurston', 'kim', 'steve', 'lee')
+            
+    def __init__(self):
+        self.number = number = randint(1,99999)
+        self.nested_object = ADObject.Nested()
+        self.dict = {'a': 1, 'b': 2, 'c': 3}
+        
+def get_object1():
+    # client will see a dictonary
+    return ADObject()
+
+from object import APObject
+
+def get_object2():
+    # client will see a Pickleable object
+    obj = cPickle.dumps(APObject())
+    return rpc.Binary(obj)
+
+server = XMLRPCServer('object_server', addr)
+server.register_function(get_object1)
+server.register_function(get_object2)
+
+try:
+    server.serve_forever()
+except KeyboardInterrupt:
+    pass

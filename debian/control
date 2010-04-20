@@ -1,0 +1,12 @@
+Source: python-rpclite
+Section: misc
+Priority: optional
+Maintainer: Lars Ørum Rasmussen <ras@dmi.dk>
+Build-Depends: debhelper (>= 5)
+Standards-Version: 3.7.2
+
+Package: python-rpclite
+Architecture: any
+Depends: python
+Description: DMI/TI, an XML-RPC client.
+ 

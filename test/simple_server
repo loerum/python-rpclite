@@ -1,0 +1,116 @@
+#!/usr/bin/python
+#
+import sys
+import getopt
+
+from rpclite.server import BlockingXMLRPCServer, ThreadingXMLRPCServer, ForkingXMLRPCServer, list_public_methods
+
+# handle options
+server = ThreadingXMLRPCServer
+opts,args = getopt.getopt( sys.argv[1:], 'btf' )    
+for k,v in opts:
+  if k == '-b':
+      server = BlockingXMLRPCServer
+  elif k == '-t':
+      server = ThreadingXMLRPCServer
+  elif k == '-f':
+      server = ForkingXMLRPCServer
+try:
+    addr = args[0], int(args[1])
+except IndexError:
+    addr = "localhost", 8021
+
+
+def echo(data):
+    return data
+
+class MyMethods:
+    
+    class Nested:
+        def hello(self):
+            return 'nested hello'
+            
+    def __init__(self):
+        self.nested = MyMethods.Nested()
+
+    def _listMethods(self):
+        # this one is needed, since we have a nested class.
+        return list_public_methods(self) + \
+               list_public_methods(self.nested, prepend='nested.')
+
+    def hello(self):
+        import os, threading, socket
+        return "hello"
+
+class ADObject:
+    class Nested:
+        def __init__(self):
+            self.number = 8989
+            self.tuple = ('thurston', 'kim', 'steve', 'lee')
+            
+    def __init__(self):
+        self.number = number = 9898
+        self.nested_object = ADObject.Nested()
+        self.dict = {'a': 1, 'b': 2, 'c': 3}
+        
+def get_object():
+    # client will see a dictonary
+    return ADObject()
+
+def sleep(dt):        
+    import time
+    print '+++ sleeping +++ ...'
+    sys.stdout.flush()
+    time.sleep(dt)
+    print '+++ woke up +++'
+    sys.stdout.flush()
+    return 1
+
+def do_exception():
+    string.split('123')
+    #2/0
+
+server = server('test_server', addr)
+
+# 1) echo
+print '1: echo ...'
+server.register_function(echo)
+server.handle_request()
+
+# 2) instance server
+print '2: instance ...'
+server.register_instance(MyMethods(), allow_dotted_names=True)
+server.handle_request()
+server.handle_request()
+
+# 3) class server
+print '3: class ...'
+server.register_class(MyMethods, allow_dotted_names=True)
+server.handle_request()
+server.handle_request()
+
+# 4) object server
+print '4: object ...'
+server.register_function(get_object)
+server.handle_request()
+
+# 5) timeout server
+print '5: timeout ...'
+server.register_function(sleep)
+server.handle_request()
+server.handle_request()
+
+# 6) list methods
+print '6: list methods ...'
+server.handle_request()
+
+# 6) who are you
+#print 'who are you ? ...'
+#server.handle_request()
+#server.server_close()
+
+# 7) traceback server
+#print 'traceback ...'
+#server.register_function(do_exception)
+#server.handle_request()
+

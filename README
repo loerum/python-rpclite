@@ -1,0 +1,16 @@
+This rpclite package introduces some additions to Pythons standard
+xmlrpclib and SimpleXMLRPCServer. Some of it (if not most) will be
+obsolete in Python 2.6
+
+It introduces:
+
+  * Keywordes arguments, like:
+    server.get_something(*params, timeout=11)
+
+  * Threaded and forking XML-RPC servers:
+    BlockingXMLRPCServer, ThreadingXMLRPCServer and ForkingXMLRPCServer,
+    where XMLRPCServer = ThreadingXMLRPCServer	
+
+    Therefor, also, introducing the possibility to register classes
+    (instead of instances), so connections and threads can have separate
+    instances of a registered class.

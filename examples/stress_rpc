@@ -1,0 +1,54 @@
+#!/usr/bin/python
+#
+import sys
+import time
+import getopt
+from random import randint
+
+import rpclite as rpc
+    
+def usage():
+    print >>sys.stderr, "usage: stress_rpc [-s<size>] [-i<interval>] [<url>]"
+    sys.exit(2)
+
+# handle options
+size = 256
+interval = 1
+opts,args = getopt.getopt( sys.argv[1:], 's:i:h' )
+for k,v in opts:
+  if k == '-h': usage()
+  if k == '-s': size = max(24, int(v))
+  if k == '-i': interval = float(v)
+
+try:
+    url = args[0]
+except IndexError:
+    url = "http://localhost:8021"
+    
+
+server = rpc.XMLRPCServerProxy(url)
+
+display = max(1, min(300, 3/interval))
+counter = 0
+while 1:
+    try:
+        counter += 1
+        
+        data = ''
+        while len(data) < size:
+            data += str(randint(1,999999))
+        data = data[:size]
+        lhash = hash(data)
+        
+        rdata = server.system.ping(data)
+        if counter == 1 or counter%display == 0:
+            print 'counter: %10d'%counter, ', size: %10d bytes'%len(rdata)
+            
+        if lhash != hash(data):
+            print 'OHOH something is really rotten'
+            break
+        
+        time.sleep(interval)
+        
+    except KeyboardInterrupt:
+        break    

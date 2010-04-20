@@ -1,0 +1,57 @@
+#!/usr/bin/python
+#
+import sys
+import getopt
+import filecmp
+
+import rpclite as rpc
+
+def usage():
+    print >>sys.stderr, "usage: file_client [-u<url>] file-1 file-2 [file-3]"
+    sys.exit(2)
+
+#
+# Handle options
+#
+url = "http://localhost:8021"
+opts,args = getopt.getopt( sys.argv[1:], 'u:' )
+for k,v in opts:
+  if k == '-u': url = v
+try:
+    fn1 = args[0]
+    fn2 = args[1]
+except IndexError:
+    usage()
+try:
+    fn3 = args[2]
+except IndexError:
+    fn3 = fn2
+
+if fn2[0] != '/': fn2 = './' + fn2  # cosmetic
+
+server = rpc.XMLRPCServerProxy(url)
+
+#
+# Send file
+#
+print 'sending', fn1, 'to', url + fn2
+fp = open(fn1, 'rb')
+buf = fp.read()
+fp.close()
+server.send_file(fn2, rpc.Binary(buf))
+
+#
+# Get it back
+#
+print 'getting', url + fn2
+buf = server.get_file(fn2)
+buf = buf.data
+print 'saving', fn3
+fp = open(fn3, 'wb')
+fp.write(buf)
+fp.close()
+
+#
+# Compare
+#
+print 'compare say', filecmp.cmp(fn1, fn3)

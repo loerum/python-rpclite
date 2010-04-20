@@ -1,0 +1,19 @@
+#!/usr/bin/python
+#
+import sys
+
+import rpclite as rpc
+
+try:
+    url = sys.argv[1]
+except IndexError:
+    url = "http://localhost:8021"
+
+
+print url,
+try:
+    rpc.XMLRPCServerProxy(url).system.isalive(timeout=5)
+except rpc.SocketError:
+    print 'is dead'
+    sys.exit(1)
+print 'is alive'

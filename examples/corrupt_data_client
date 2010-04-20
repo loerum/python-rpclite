@@ -1,0 +1,19 @@
+#!/usr/bin/python
+#
+import sys
+import time
+
+import rpclite as rpc
+    
+try:
+    url = sys.argv[1]
+except IndexError:
+    url = "http://localhost:8021"
+
+
+server = rpc.XMLRPCServerProxy(url)
+
+while 1:
+    rh, data = server.generate_data()
+    if int(rh) != hash(data):
+        print 'DATA ARE CORRUPTED'

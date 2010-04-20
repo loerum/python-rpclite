@@ -1,0 +1,24 @@
+#!/usr/bin/python
+#
+import sys
+
+import rpclite as rpc
+    
+try:
+    url = sys.argv[1]
+except IndexError:
+    url = "http://localhost:8021"
+
+
+server = rpc.XMLRPCServerProxy(url)
+
+multi = rpc.MultiCall(server)
+multi.system.ping('ping 1')
+multi.system.ping('ping 2')
+for i in range(3,11):
+    multi.system.ping('ping %d'%i)
+try:
+    for response in multi():
+        print response
+except rpc.Error, v:
+    print "ERROR", v

@@ -1,0 +1,61 @@
+#!/usr/bin/python
+#
+import sys
+import time
+import getopt
+from datetime import datetime
+from random import randint
+    
+import rpclite as rpc
+
+def usage():
+    print >>sys.stderr, "usage: ping_rpc [-t timeout] [-s<size>] [-i<interval>] [<url>]"
+    sys.exit(2)
+
+# handle options
+size = 256
+interval = 1
+timeout = 0
+opts,args = getopt.getopt( sys.argv[1:], 's:i:ht:' )
+for k,v in opts:
+  if k == '-h': usage()
+  if k == '-s': size = int(v)
+  if k == '-i': interval = float(v)
+  if k == '-t': timeout = float(v)
+
+try:
+    url = args[0]
+except IndexError:
+    url = "http://localhost:8021"
+    
+
+server = rpc.XMLRPCServerProxy(url)
+
+while 1:
+    try:
+        data = ''
+        while len(data) < size:
+            data += str(randint(1,999999))
+        data = data[:size]
+        lhash = hash(data)
+
+        text = server.system.whoami()
+        
+        t0 = datetime.now()
+        try:
+            rdata = server.system.ping(data, timeout=timeout)
+        except rpc.SocketTimeout:
+            print '+++ timeout +++'
+            continue
+        dt = datetime.now() - t0
+        dt = 1000.*dt.seconds + dt.microseconds/1000.
+
+        text += ", size:  %d bytes time: %8.3f ms"%(len(rdata),dt)
+        if hash(rdata) != lhash:
+            text += '    corrupted data !!!'
+        print text
+                    
+        time.sleep(interval)
+        
+    except KeyboardInterrupt:
+        break
