@@ -14,3 +14,12 @@ It introduces:
     Therefor, also, introducing the possibility to register classes
     (instead of instances), so connections and threads can have separate
     instances of a registered class.
+
+After installing you could:
+
+  * cd rpclite
+  * python setup.py build
+  * cd server
+  * python setup.py build
+  * cd ../
+  * python setup.py test (if python-nose are installed).
