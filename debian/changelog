@@ -1,3 +1,9 @@
+python-rpclite (0.2-2) unstable; urgency=low
+
+  * Added GPL license
+
+ -- Lars Ørum Rasmussen <ras@dmi.dk>  Fri, 23 Apr 2010 08:18:17 +0000
+
 python-rpclite (0.2-1) unstable; urgency=low
 
   * Initial release.
