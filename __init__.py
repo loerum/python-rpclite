@@ -8,6 +8,7 @@
 #-----------------------------------------------------------------------------
 import os
 import sys
+import logging
 import socket
 import httplib
 from xmlrpclib import * # !!!
@@ -18,6 +19,8 @@ __version__ = "$Revision$"
 
 SocketError = socket.error
 SocketTimeout = socket.timeout
+
+logger = logging.getLogger('rpc-client')
 
 #-----------------------------------------------------------------------------
 #
@@ -48,8 +51,7 @@ class HTTPConnection(httplib.HTTPConnection):
         #
         # NOTE: we DO propagate the error, though, because we cannot simply
         #       ignore the error... the caller will know if they can retry.
-        if self.debuglevel > 0:
-            print "send:", repr(str)
+        logger.debug( "send: %s", repr(str))
         try:
             self.sock.sendall(str)
         except socket.error, v:

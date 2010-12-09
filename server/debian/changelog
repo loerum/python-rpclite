@@ -1,6 +1,12 @@
+python-rpclite-server (0.2-3) unstable; urgency=low
+
+  * Now using logging
+
+ -- Lars Orum Rasmussen <ras@dmi.dk>  Thu, 09 Dec 2010 13:50:41 +0000
+
 python-rpclite-server (0.2-1) unstable; urgency=low
 
   * Initial release.
 
- -- Lars Ørum Rasmussen <ras@dmi.dk>  Sun, 27 Apr 2008 15:48:52 +0000
+ -- Lars Orum Rasmussen <ras@dmi.dk>  Sun, 27 Apr 2008 15:48:52 +0000
 

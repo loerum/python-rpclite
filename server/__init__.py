@@ -15,6 +15,7 @@
 import os
 import sys
 import time
+import logging
 import threading
 import socket
 import SocketServer
@@ -30,6 +31,8 @@ assert sys.version[:3] >= '2.3', 'Python version 2.3 or above is required.'
 
 __version__ = "$Revision$"
 __all__ = ['XMLRPCServer', 'ThreadingXMLRPCServer', 'ForkingXMLRPCServer', 'BlockingXMLRPCServer']
+
+logger = logging.getLogger('rpc-server')
 
 #-----------------------------------------------------------------------------
 #
@@ -74,14 +77,14 @@ class _XMLRPCDispatcher(SimpleXMLRPCDispatcher):
         self.klass = klass
         self.allow_dotted_names = allow_dotted_names
         if self.instance:
-            print >>sys.stderr, "warning: overwriting previous registered instance"
+            logger.warning("warning: overwriting previous registered instance")
         self.instance = None
 
     def register_instance(self, instance, allow_dotted_names=True):
         self.instance = instance
         self.allow_dotted_names = allow_dotted_names
         if self.klass:
-            print >>sys.stderr, "warning: overwriting previous registered class"
+            logger.warning("warning: overwriting previous registered class")
         self.klass = None
 
     #
@@ -217,7 +220,7 @@ class _SocketMixout:
     def handle_error(self, request, client_address):
         type, value, trace = sys.exc_info()
         if type == socket.error and value[0] == 32:
-            print >>sys.stderr, 'Broken pipe for', client_address, '... ignoring'
+            logger.error('Broken pipe for %s ...ignoring', str(client_address))
         else:
             super('_SocketMixout', self).handle_error(request, client_address)
 
@@ -257,7 +260,7 @@ class _XMLRPCServer(_SocketMixout, SocketServer.TCPServer, _XMLRPCDispatcher):
         
         self._setup_socket()        
         self._setup_dispatcher()
-        print self.main_id
+        logger.info(self.main_id)
 
 #-----------------------------------------------------------------------------
 #

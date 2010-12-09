@@ -1,12 +1,18 @@
+python-rpclite (0.2-5) unstable; urgency=low
+
+  * Now using logging.
+
+ -- Lars Orum Rasmussen <ras@dmi.dk>  Thu, 09 Dec 2010 13:49:57 +0000
+
 python-rpclite (0.2-2) unstable; urgency=low
 
   * Added GPL license
 
- -- Lars Ørum Rasmussen <ras@dmi.dk>  Fri, 23 Apr 2010 08:18:17 +0000
+ -- Lars Orum Rasmussen <ras@dmi.dk>  Fri, 23 Apr 2010 08:18:17 +0000
 
 python-rpclite (0.2-1) unstable; urgency=low
 
   * Initial release.
 
- -- Lars Ørum Rasmussen <ras@dmi.dk>  Sun, 27 Apr 2008 15:48:52 +0000
+ -- Lars Orum Rasmussen <ras@dmi.dk>  Sun, 27 Apr 2008 15:48:52 +0000
 
