@@ -29,5 +29,4 @@ setup(name='python-rpclite',
       maintainer_email='ras@dmi.dk',
       package_dir={'rpclite': '.'},
       packages=['rpclite'],
-      test_suite = 'nose.collector',
      )
