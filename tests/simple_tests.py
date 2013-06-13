@@ -23,7 +23,7 @@ url = "http://localhost:8021"
 
 class _Test(unittest.TestCase):
     server_args = ''
-    sever_name = 'no name'
+    server_name = 'no name'
     
     def setUp(self):
         # start server
